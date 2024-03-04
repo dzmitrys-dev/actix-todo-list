@@ -21,18 +21,10 @@ impl AppError {
         match &*self {
             AppError {
                 message: Some(message),
-                ..
+                cause: _,
+                error_type: _,
             } => message.clone(),
-            AppError {
-                message: None,
-                error_type: AppErrorType::DbError,
-                ..
-            } => "Database error!".to_string(),
-            AppError {
-                message: None,
-                error_type: AppErrorType::NotFoundError,
-                ..
-            } => "Not found".to_string(),
+
             _ => "Unexpected Error".to_string(),
         }
     }
@@ -69,5 +61,21 @@ impl ResponseError for AppError {
         HttpResponse::build(self.status_code()).json(AppErrorResponse {
             error: self.message(),
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{AppError, AppErrorType};
+
+    #[test]
+    fn test_default_message() {
+        let db_error = AppError {
+            message: None,
+            cause: None,
+            error_type: AppErrorType::DbError,
+        };
+        assert_eq!(db_error.message(), "Unexpected Error".to_string(),
+                   "Default message should be shown");
     }
 }
