@@ -3,9 +3,7 @@ use deadpool_postgres::Pool;
 use serde::Deserialize;
 use slog::{
     Logger,
-    Drain,
-    o,
-    info
+    Drain
 };
 
 #[derive(Deserialize, Debug)]

@@ -1,6 +1,6 @@
 use actix_web::{HttpResponse, Responder, web};
 use deadpool_postgres::{Client, Pool};
-use slog::{crit, Drain, error, Logger, o};
+use slog::{crit, error, Logger, o};
 use web::Json;
 use crate::models::*;
 use crate::db;

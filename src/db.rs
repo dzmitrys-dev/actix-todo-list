@@ -1,7 +1,6 @@
 use crate::models::*;
 use deadpool_postgres::Client;
 use tokio_pg_mapper::FromTokioPostgresRow;
-use std::io;
 use crate::errors::*;
 
 pub async fn get_todos(client: &Client) -> Result<Vec<TodoList>, AppError> {

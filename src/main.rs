@@ -5,24 +5,17 @@ mod db;
 mod errors;
 
 use std::io;
-use actix_web::{HttpServer, App, web, Responder};
+use actix_web::{HttpServer, App, web};
 use dotenv::dotenv;
-use
-
-slog::{
-    Logger,
-    Drain,
-    o,
+use slog::{
     info
 };
-use tokio_postgres::NoTls;
 use crate::handlers::*;
 use crate::models::AppState;
 use crate::config::Config;
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
-
     dotenv().ok();
 
     let config = Config::from_env().unwrap();
@@ -37,9 +30,9 @@ async fn main() -> io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(
-                web::Data::new(AppState{
+                web::Data::new(AppState {
                     pool: pool.clone(),
-                    log: log.clone()
+                    log: log.clone(),
                 })
             )
             .route("/", web::get().to(status))
@@ -55,11 +48,11 @@ async fn main() -> io::Result<()> {
 
 #[cfg(test)]
 mod integration_tests {
-    use actix_web::{App, web};
+    use actix_web::{App, web, test};
     use dotenv::dotenv;
-    use tokio_postgres::NoTls;
     use crate::config::Config;
-    use crate::models::AppState;
+    use crate::handlers::*;
+    use crate::models::*;
 
     #[actix_rt::test]
     async fn test_get_todos() {
@@ -72,12 +65,25 @@ mod integration_tests {
 
         let log = Config::configure_log();
 
-        // App::new()
-        //     .app_data(
-        //         web::Data::new(AppState{
-        //             pool: pool.clone(),
-        //             log: log.clone()
-        //         })
-        //     )
+        let app = App::new()
+            .app_data(
+                web::Data::new(AppState {
+                    pool: pool.clone(),
+                    log: log.clone(),
+                })
+            )
+            .route("/todos{_:/?}", web::get().to(get_todos));
+
+        let mut app = test::init_service(app).await;
+
+        let req = test::TestRequest::get().uri("/todos").to_request();
+        let resp = test::call_service(&mut app, req).await;
+
+        assert!(resp.status().is_success(), "GET /todos must return status code 200");
+    }
+
+    #[actix_rt::test]
+    async fn test_create_todo() {
+
     }
 }
