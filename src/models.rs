@@ -2,10 +2,13 @@ use deadpool_postgres::Pool;
 use serde::{Serialize, Deserialize};
 use slog::Logger;
 use tokio_pg_mapper_derive::PostgresMapper;
+use crate::config::Config;
 
+#[derive(Clone)]
 pub struct AppState {
     pub pool: Pool,
-    pub log: Logger
+    pub log: Logger,
+    pub config: Config,
 }
 
 #[derive(Serialize)]

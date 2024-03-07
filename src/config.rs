@@ -6,13 +6,13 @@ use slog::{
     Drain
 };
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct ServerConfig {
     pub host: String,
     pub port: u16,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct Config {
     pub server: ServerConfig,
     pub pg: deadpool_postgres::Config,
